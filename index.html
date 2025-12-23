@@ -26,14 +26,28 @@
   <h1>🎄 Merry Christmas 🎄</h1>
   <h2>Dear My Host Family</h2>
 
+  <p>
+    Dear Host Family, <br><br>
+    Even though I am back in Mongolia, I want you to know that you are always in my heart. 
+    Thank you for welcoming me into your home and treating me like family. 
+    Every laugh, every meal, and every moment we shared made this year unforgettable. <br><br>
+
+    Being far apart now makes me appreciate even more the love, care, and warmth you gave me. 
+    I will always cherish the memories, and I hope one day we can create even more. <br><br>
+
+    Merry Christmas and Happy New Year! 
+    May your holidays be filled with love, joy, and laughter. 
+    I am forever grateful to have been part of your family. ❤️
+  </p>
+
   <!-- 🎅 Santa / Tree -->
   <div class="santa">🎅 🎄 🎅</div>
 
   <!-- 🖼️ Gallery -->
   <div class="gallery">
     <img src="photo1.jpg" data-caption="Our first Christmas together ❤️" onclick="openMedia(0)" data-type="image">
-    <img src="photo2.jpg" data-caption="Look at Liz 🎄" onclick="openMedia(1)" data-type="image">
-    <img src="videoThumb.png" data-caption="Watch our Christmas video 🎥" onclick="openMedia(2)" data-type="video" data-src="christmasVideo.mp4">
+    <img src="photo2.jpg" data-caption="Thank you for all the memories 🎄" onclick="openMedia(1)" data-type="image">
+    <img src="videoThumb.jpg" data-caption="Watch our Christmas video 🎥" onclick="openMedia(2)" data-type="video" data-src="christmasVideo.mp4">
   </div>
 
   <!-- 🎁 Gift -->
@@ -84,18 +98,11 @@ for (let i = 0; i < 80; i++) {
 }
 
 /* ⌨️ Typing Effect for Gift */
-const message = `Dear Host Family, 
-
-Even though I am back in Mongolia, I want you to know that you are always in my heart. 
-Thank you for welcoming me into your home and treating me like family. 
-Every laugh, every meal, and every moment we shared made this year unforgettable.
-
-Being far apart now makes me appreciate even more the love, care, and warmth you gave me. 
-I will always cherish the memories, and I hope one day we can create even more. 
-
-Merry Christmas and Happy New Year! 
-May your holidays be filled with love, joy, and laughter. 
-I am forever grateful to have been part of your family. ❤️`;
+const message = `Thank you for welcoming me into your family
+and making this year unforgettable.
+I will always be grateful for your love,
+kindness, and support.
+Merry Christmas and Happy New Year! ❤️`;
 
 let index = 0;
 
@@ -225,9 +232,18 @@ const specialBtn = document.getElementById("specialBtn");
 const specialPopup = document.getElementById("specialPopup");
 const specialVideo = document.getElementById("specialVideo");
 
+// ✅ Global special music object
+let specialMusic = new Audio("specialMusic.mp3");
+specialMusic.loop = true;
+specialMusic.volume = 0.5;
+
 specialBtn.addEventListener("click", () => {
   // Pause main music
   music.pause();
+
+  // Stop and reset special music if already playing
+  specialMusic.pause();
+  specialMusic.currentTime = 0;
 
   // Play special video
   specialVideo.src = "specialVideo.mp4";
@@ -235,23 +251,25 @@ specialBtn.addEventListener("click", () => {
   specialVideo.play();
 
   // Play special music
-  const specialMusic = new Audio("specialMusic.mp3");
-  specialMusic.loop = true;
-  specialMusic.volume = 0.5;
   specialMusic.play();
 
-  specialPopup.dataset.specialMusic = specialMusic;
+  // Show popup
   specialPopup.classList.add("show");
 });
 
 function closeSpecialVideo() {
+  // Hide popup
   specialPopup.classList.remove("show");
+
+  // Stop video
   specialVideo.pause();
   specialVideo.src = "";
 
-  const specialMusic = specialPopup.dataset.specialMusic;
-  if (specialMusic) specialMusic.pause();
+  // Stop special music
+  specialMusic.pause();
+  specialMusic.currentTime = 0;
 
+  // Resume main music
   music.play();
 }
 </script>
