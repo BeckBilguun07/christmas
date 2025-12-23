@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Merry Christmas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ❄️ Snow -->
+<div id="snow-container"></div>
+
+<!-- 🎶 Main Music -->
+<audio id="bg-music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card">
+
+  <!-- ✨ Lights -->
+  <div class="lights">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+
+  <h1>🎄 Merry Christmas 🎄</h1>
+  <h2>Dear My Host Family</h2>
+
+  <!-- 🎅 Santa / Tree -->
+  <div class="santa">🎅 🎄 🎅</div>
+
+  <!-- 🖼️ Gallery -->
+  <div class="gallery">
+    <img src="photo1.jpg" data-caption="Our first Christmas together ❤️" onclick="openMedia(0)" data-type="image">
+    <img src="photo2.jpg" data-caption="Look at Liz 🎄" onclick="openMedia(1)" data-type="image">
+    <img src="videoThumb.png" data-caption="Watch our Christmas video 🎥" onclick="openMedia(2)" data-type="video" data-src="christmasVideo.mp4">
+  </div>
+
+  <!-- 🎁 Gift -->
+  <button class="gift" onclick="openGift()">🎁 Click to open your gift</button>
+  <p style="font-size:12px;opacity:0.6;">🔊 Click anywhere to enable music</p>
+</div>
+
+<!-- 💌 Gift Popup -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <h2>❤️ From Bilguun ❤️</h2>
+    <p id="typing"></p>
+    <button onclick="closeGift()">Close</button>
+  </div>
+</div>
+
+<!-- 🖼️ Image/Video Popup -->
+<div id="imagePopup" class="image-popup">
+  <span class="close" onclick="closeMedia()">✖</span>
+  <div class="popup-inner">
+    <div id="mediaContainer"></div>
+    <p id="popupCaption"></p>
+    <p id="photoCounter"></p>
+  </div>
+</div>
+
+<!-- 🎥 Special Video Button -->
+<button id="specialBtn">🎥 Watch Surprise Video</button>
+
+<!-- Special Video Popup -->
+<div id="specialPopup" class="special-popup">
+  <span class="close" onclick="closeSpecialVideo()">✖</span>
+  <video id="specialVideo" muted autoplay loop></video>
+</div>
+
+<script>
+/* ❄️ Realistic Snow */
+const snowContainer = document.getElementById("snow-container");
+for (let i = 0; i < 80; i++) {
+  const snow = document.createElement("div");
+  snow.className = "snowflake";
+  snow.style.left = Math.random() * 100 + "vw";
+  snow.style.animationDuration = 5 + Math.random() * 10 + "s";
+  snow.style.opacity = Math.random();
+  snow.style.fontSize = 8 + Math.random() * 18 + "px";
+  snow.innerHTML = "❄";
+  snowContainer.appendChild(snow);
+}
+
+/* ⌨️ Typing Effect for Gift */
+const message = `Dear Host Family, 
+
+Even though I am back in Mongolia, I want you to know that you are always in my heart. 
+Thank you for welcoming me into your home and treating me like family. 
+Every laugh, every meal, and every moment we shared made this year unforgettable.
+
+Being far apart now makes me appreciate even more the love, care, and warmth you gave me. 
+I will always cherish the memories, and I hope one day we can create even more. 
+
+Merry Christmas and Happy New Year! 
+May your holidays be filled with love, joy, and laughter. 
+I am forever grateful to have been part of your family. ❤️`;
+
+let index = 0;
+
+function openGift() {
+  document.getElementById("popup").style.display = "flex";
+  document.getElementById("typing").innerHTML = "";
+  index = 0;
+  typeText();
+}
+
+function typeText() {
+  if (index < message.length) {
+    document.getElementById("typing").innerHTML += message.charAt(index);
+    index++;
+    setTimeout(typeText, 40);
+  }
+}
+
+function closeGift() {
+  document.getElementById("popup").style.display = "none";
+}
+
+/* 🎶 Main Music Fade-In */
+const music = document.getElementById("bg-music");
+music.volume = 0;
+let started = false;
+
+function fadeInMusic() {
+  if (started) return;
+  started = true;
+  music.play();
+  let volume = 0;
+  const fade = setInterval(() => {
+    if (volume < 0.6) {
+      volume += 0.02;
+      music.volume = volume;
+    } else {
+      clearInterval(fade);
+    }
+  }, 200);
+}
+
+document.addEventListener("click", fadeInMusic, { once: true });
+document.addEventListener("touchstart", fadeInMusic, { once: true });
+
+/* 🖼️ Image/Video Popup */
+const images = document.querySelectorAll(".gallery img");
+let currentIndex = 0;
+let startX = 0;
+
+function openMedia(index) {
+  currentIndex = index;
+  updateMedia();
+  document.getElementById("imagePopup").classList.add("show");
+}
+
+function closeMedia() {
+  const media = document.getElementById("mediaContainer");
+  if (media.firstChild && media.firstChild.tagName === "VIDEO") {
+    media.firstChild.pause();
+    media.innerHTML = "";
+  }
+  document.getElementById("imagePopup").classList.remove("show");
+}
+
+function nextMedia() {
+  currentIndex = (currentIndex + 1) % images.length;
+  updateMedia();
+}
+
+function prevMedia() {
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  updateMedia();
+}
+
+function updateMedia() {
+  const mediaContainer = document.getElementById("mediaContainer");
+  const caption = document.getElementById("popupCaption");
+  const counter = document.getElementById("photoCounter");
+
+  const img = images[currentIndex];
+  const type = img.dataset.type;
+
+  mediaContainer.innerHTML = "";
+
+  if (type === "image") {
+    const newImg = document.createElement("img");
+    newImg.src = img.src;
+    newImg.classList.add("fade");
+    mediaContainer.appendChild(newImg);
+  } else if (type === "video") {
+    const video = document.createElement("video");
+    video.src = img.dataset.src;
+    video.controls = true;
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.classList.add("fade");
+    mediaContainer.appendChild(video);
+  }
+
+  caption.innerText = img.dataset.caption;
+  counter.innerText = `${currentIndex + 1} / ${images.length}`;
+}
+
+document.getElementById("mediaContainer").addEventListener("touchstart", e => { startX = e.touches[0].clientX; });
+document.getElementById("mediaContainer").addEventListener("touchend", e => {
+  const endX = e.changedTouches[0].clientX;
+  if (startX - endX > 50) nextMedia();
+  if (endX - startX > 50) prevMedia();
+});
+
+document.getElementById("imagePopup").addEventListener("click", e => {
+  if (e.target.id === "imagePopup") closeMedia();
+});
+
+document.addEventListener("keydown", e => {
+  const popupOpen = document.getElementById("imagePopup").classList.contains("show");
+  if (!popupOpen) return;
+  if (e.key === "ArrowRight") nextMedia();
+  if (e.key === "ArrowLeft") prevMedia();
+  if (e.key === "Escape") closeMedia();
+});
+
+/* 🎥 Special Video Button + Music */
+const specialBtn = document.getElementById("specialBtn");
+const specialPopup = document.getElementById("specialPopup");
+const specialVideo = document.getElementById("specialVideo");
+
+specialBtn.addEventListener("click", () => {
+  // Pause main music
+  music.pause();
+
+  // Play special video
+  specialVideo.src = "specialVideo.mp4";
+  specialVideo.muted = true;
+  specialVideo.play();
+
+  // Play special music
+  const specialMusic = new Audio("specialMusic.mp3");
+  specialMusic.loop = true;
+  specialMusic.volume = 0.5;
+  specialMusic.play();
+
+  specialPopup.dataset.specialMusic = specialMusic;
+  specialPopup.classList.add("show");
+});
+
+function closeSpecialVideo() {
+  specialPopup.classList.remove("show");
+  specialVideo.pause();
+  specialVideo.src = "";
+
+  const specialMusic = specialPopup.dataset.specialMusic;
+  if (specialMusic) specialMusic.pause();
+
+  music.play();
+}
+</script>
+</body>
+</html>
